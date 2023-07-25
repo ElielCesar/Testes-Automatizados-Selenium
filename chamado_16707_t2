@@ -1,0 +1,105 @@
+# objetivo: realizar 4 agendamentos no mesmo dia no auditorio - bloco F do campus Jipa
+# 
+# data inicio e fim: 28/07/2023 (livre)
+# recorrencia: evento único
+# horário inicio e fim : 08:00 às 9:00, 10:00 às 11:00, 13:00 às 14:00, 15:00 às 16:00
+# justificativa: agendamento de teste
+# sem interressado
+# sem arquivo de upload
+# url de teste: http://192.168.2.2:8000/admin/comum/sala/?predio__uo=7&agendavel__exact=1&q=audi&tab=tab_any_data
+
+
+########### SETUP E LOGIN SUAP PADRÃO #############
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+import time
+
+browser = webdriver.Chrome()
+
+siape = 'SIAPE AQUI'       # siape da pessoa
+senha = '123'              # senha do ambiente local dev do meu computador
+
+browser.get('http://192.168.2.2:8000/accounts/login/')
+time.sleep(2)
+browser.maximize_window()
+time.sleep(2)
+
+usuario = browser.find_element(By.ID, 'id_username')
+usuario.send_keys(siape)
+
+password = browser.find_element(By.ID, 'id_password')
+password.send_keys(senha)
+
+btn_login = browser.find_element(By.XPATH, '/html/body/div/main/div/div[1]/form/div[4]/input')
+btn_login.click()
+
+time.sleep(3)
+
+########### END LOGIN #############
+
+
+for i in (0,1,2,3):
+    ###### abre a url alvo após fazer o login no sistema, sem sair da página #####
+    url_alvo = 'http://192.168.2.2:8000/admin/comum/sala/?predio__uo=7&agendavel__exact=1&q=audi&tab=tab_any_data'
+
+    script_js = f"window.location.href = '{url_alvo}';"
+    browser.execute_script(script_js)
+    time.sleep(3)
+
+
+    ## Inicio do teste
+
+    # clicar em agendar a sala especificada pela url
+    btn_solicitar = browser.find_element(By.LINK_TEXT, 'Solicitar/Ver Reservas')
+    btn_solicitar.click()
+    time.sleep(2)
+
+    # fazer a página rolar até o campo recorrencia
+    body_pagina = browser.find_element(By.TAG_NAME, 'body')
+
+    for item in (1,2,3,4,5,6):
+        body_pagina.send_keys(Keys.PAGE_DOWN) 
+
+    time.sleep(1)
+
+    # campo recorrencia
+    elemento_recorrencia = Select(browser.find_element(By.ID, 'id_recorrencia'))
+    elemento_recorrencia.select_by_value('evento_unico')
+    time.sleep(1)
+
+    # campos datas
+    data_inicio = browser.find_element(By.ID, 'id_data_inicio')
+    data_inicio.send_keys('28/07/2023')
+    time.sleep(1)
+
+    data_fim = browser.find_element(By.ID, 'id_data_fim')
+    data_fim.send_keys('28/07/2023')
+    time.sleep(1)
+
+    # listas de horarios a serem cadastrados conforme loop
+    horarios_iniciais = ['080000', '100000', '130000', '150000' ]
+    horarios_finais =   ['090000', '110000', '140000', '160000' ]
+
+    # campos horarios
+    hora_inicio = browser.find_element(By.ID, 'id_hora_inicio')
+    hora_inicio.send_keys(horarios_iniciais[i])
+    time.sleep(1)
+
+    hora_fim = browser.find_element(By.ID, 'id_hora_fim')
+    hora_fim.send_keys(horarios_finais[i])
+    time.sleep(1)
+
+    # campo justificativa
+    justificativa = browser.find_element(By.ID, 'id_justificativa')
+    justificativa.send_keys('Justificativa de teste')
+    time.sleep(1)
+
+    # Salvar
+    # SALVAR DEVE SER CLICADO MANUALMENTE PARA VERFICAR A MENSAGEM RETORNADA PELO SISTEMA
+
+    print('###### CLIQUE EM SALVAR #####')
+    print('###### CLIQUE EM SALVAR #####')
+    print('###### CLIQUE EM SALVAR #####')
+    time.sleep(10)
