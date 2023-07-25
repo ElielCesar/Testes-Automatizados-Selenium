@@ -62,7 +62,7 @@ body_pagina = browser.find_element(By.TAG_NAME, 'body')
 for item in (1,2,3,4,5,6):
     body_pagina.send_keys(Keys.PAGE_DOWN) 
 
-time.sleep(2)
+time.sleep(1)
 
 # campo recorrencia
 elemento_recorrencia = Select(browser.find_element(By.ID, 'id_recorrencia'))
@@ -98,7 +98,7 @@ time.sleep(1)
 print('###### CLIQUE EM SALVAR #####')
 print('###### CLIQUE EM SALVAR #####')
 print('###### CLIQUE EM SALVAR #####')
-time.sleep(60)
+time.sleep(30)
 
 
 
